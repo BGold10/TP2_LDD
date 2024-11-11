@@ -140,23 +140,7 @@ cantidadXdigito = sql^consulta_sql
 
 #mismo numero de 0s y 1s, esta balanceado.
 
-#%%
 
-
-
-n = 500
-indices = []
-data1 = img01.iloc[:,2:]
-for i in range(n):
-    indice = rd.randint(0, data1.shape[0])
-    indices.append(indice)
-muestreo = data1.iloc[indices]
-promedios = muestreo.mean(axis=0).tolist()
-img2 = np.array(promedios).reshape((28,28))
-
-
-plt.imshow(img2, cmap='gray')
-plt.show()
 
 
 
@@ -206,6 +190,7 @@ def modelo_knn(X_train, X_test, Y_test, Y_train,k):
 modelo_knn(X_train, X_test, Y_test, Y_train, 5)
 
 #Muy buenas metricas pero se que hay muchos atributos que se podrian descartar.
+
 
 #%%
 
@@ -272,6 +257,22 @@ modelo_knn(X_train3, X_test3, Y_test, Y_train, 5)
 #Metricas parecidas a las del primer caso pero pueden mejorar
 
 #%%
+#Con esta imagen observamos donde estan las diferencias entre los 0s y los 1s.
+
+n = 500
+indices = []
+data1 = img01.iloc[:,2:]
+for i in range(n):
+    indice = rd.randint(0, data1.shape[0])
+    indices.append(indice)
+muestreo = data1.iloc[indices]
+promedios = muestreo.mean(axis=0).tolist()
+img2 = np.array(promedios).reshape((28,28))
+
+
+plt.imshow(img2, cmap='gray')
+plt.show()
+#%%
 #Voy a probar con un solo atributo, que seria el del medio:
 
 X_train1 = X_train[[ '406']]
@@ -293,9 +294,17 @@ modelo_knn(X_train3, X_test3, Y_test, Y_train, 5)
 
 #Logramos hacer que las metrcias suban eligiendo atributos que sabemos que pueden
 #diferenciar a los 1s de los 0s.
+#%%
+#Finalmente tomo 7 atributos que peretencen a pixeles del centro
+
+X_train7 = X_train[[ '406', '377', '378', '399','422','520','462']]
+X_test7 = X_test[[ '406', '377', '378', '399','422','520','462']]
+
+modelo_knn(X_train7, X_test7, Y_test, Y_train, 5)
+
 
 #%%
-#Con los 3 atributos dados anteriormente, voy a ir variando la cantidad de vecinos y comparar
+#Con los 7 atributos dados anteriormente, voy a ir variando la cantidad de vecinos y comparar
 
 exactitudes = []
 recalls = []
@@ -305,8 +314,8 @@ indices = []
 for k in range (5,800,30):
     
     model = KNeighborsClassifier(n_neighbors = k)
-    model.fit(X_train3, Y_train) 
-    Y_pred = model.predict(X_test3) 
+    model.fit(X_train7, Y_train) 
+    Y_pred = model.predict(X_test7) 
 
     exactitud = metrics.accuracy_score(Y_test, Y_pred)
     recall = recall_score(Y_test, Y_pred, pos_label=1) 
@@ -338,6 +347,8 @@ plt.ylabel('Valor métrica', fontsize=14)
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.legend(title='Métrica')
 plt.show()    
+
+ 
 
 #%%
 
