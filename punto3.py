@@ -3,7 +3,7 @@
 #               -Souto, Sebastian Manuel
 #               -Sanza, Gian Lucca
 #               -Goldfarb, Bruno
-
+#%%
 from inline_sql import sql, sql_val
 from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
@@ -21,7 +21,8 @@ from sklearn import metrics
 
 #seba
 #prefijo = 'C:\\Users\\Sebastián\\Documents\\LaboDeDatos\\TP2\\'
-prefijo = '/home/Estudiante/Escritorio/TP2_LDD/TP2/'
+#prefijo = '/home/Estudiante/Escritorio/TP2_LDD/TP2/'
+prefijo='C:/Users/usuario/Desktop/TP2_LDD/TP2/'
 
 data = pd.read_csv(prefijo + 'TMNIST_Data.csv')
 
@@ -155,7 +156,6 @@ arbol = arbol.fit(X_train, Y_train)
 plt.figure(figsize= [15,10])
 tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cnombres)
 
-
 #%%
 #depth =5
 arbol = tree.DecisionTreeClassifier(criterion = "entropy", max_depth= 5)
@@ -165,6 +165,7 @@ arbol = arbol.fit(X_train, Y_train)
 
 plt.figure(figsize= [15,10])
 tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cnombres)
+
 
 #%%
 #depth =10
@@ -185,6 +186,8 @@ valores_n = range(1, 11)
 
 resultados_test_gini = np.zeros((Nrep, len(valores_n)))
 resultados_train_gini = np.zeros((Nrep, len(valores_n)))
+resultados_test_gini_prec = np.zeros((Nrep, len(valores_n)))
+resultados_train_gini_prec = np.zeros((Nrep, len(valores_n)))
 
 criterion= ["entropy","gini"]
 
@@ -197,12 +200,18 @@ for i in range(Nrep):
         Y_pred_train = model.predict(X_train)
         acc_test = metrics.accuracy_score(Y_test, Y_pred)
         acc_train = metrics.accuracy_score(Y_train, Y_pred_train)
+        prec_test = metrics.precision_score(Y_test, Y_pred,average="weighted")
+        prec_train = metrics.precision_score(Y_train, Y_pred_train,average="weighted")
         resultados_test_gini[i, k-1] = acc_test
         resultados_train_gini[i, k-1] = acc_train
+        resultados_test_gini_prec[i, k-1] = prec_test
+        resultados_train_gini_prec[i, k-1] = prec_train
         
 resultados_test_entropy = np.zeros((Nrep, len(valores_n)))
 resultados_train_entropy = np.zeros((Nrep, len(valores_n)))
-        
+resultados_test_entropy_prec = np.zeros((Nrep, len(valores_n)))
+resultados_train_entropy_prec = np.zeros((Nrep, len(valores_n)))
+      
 for i in range(Nrep):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3)
     for k in valores_n:
@@ -212,8 +221,13 @@ for i in range(Nrep):
         Y_pred_train = model.predict(X_train)
         acc_test = metrics.accuracy_score(Y_test, Y_pred)
         acc_train = metrics.accuracy_score(Y_train, Y_pred_train)
+        prec_test = metrics.precision_score(Y_test, Y_pred,average="weighted")
+        prec_train = metrics.precision_score(Y_train, Y_pred_train,average="weighted")
         resultados_test_entropy[i, k-1] = acc_test
         resultados_train_entropy[i, k-1] = acc_train
+        resultados_test_entropy_prec[i, k-1] = prec_test
+        resultados_train_entropy_prec[i, k-1] = prec_train
+
 #%%
 
 promedios_train_gini = np.mean(resultados_train_gini,axis=0)
@@ -221,8 +235,8 @@ promedios_test_gini= np.mean(resultados_test_gini,axis=0)
 
 promedios_train_entropy = np.mean(resultados_train_entropy,axis=0)
 promedios_test_entropy= np.mean(resultados_test_entropy,axis=0)
-#En todos los casos, mientrsa mas preguntas hacmoes, mejor precision tiene el modelo.pero con 10 tarda mucho. 
-#Definimos por usar depth = 9
+#En todos los casos, mientrsa mas preguntas hacmoes, mejor precision y accuracy tiene el modelo.
+#pero con 10 tarda mucho. Definimos por usar depth = 9
 #%%
 
 
@@ -239,6 +253,9 @@ acc_test = metrics.accuracy_score(Y_validation, Y_pred)
 acc_train = metrics.accuracy_score(Y, Y_pred_train)
 metrics.confusion_matrix(Y, Y_pred_train)
 
+#%%
+prec_train = metrics.precision_score(Y, Y_pred_train,average="weighted")
+prec_val = metrics.precision_score(Y_validation, Y_pred,average="weighted")
 
 
 
@@ -246,10 +263,8 @@ metrics.confusion_matrix(Y, Y_pred_train)
 
 
 
-
-
-
-
+#El modelo puede memorizar los datos de entrenamiento y tener accuracy de 100%. Medir
+#performance sobre los datos de entrenamiento tiende a sobreestimar los resultados.
 
 
 
