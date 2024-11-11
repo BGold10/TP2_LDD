@@ -342,7 +342,7 @@ plt.show()
 #%%
 
 ###########PUNTO 3: ARBOLES DE DECISION################
-#(Clasificación multiclase) 
+#3. (Clasificación multiclase) 
 
 #separo el modelo en train, testing y validation:
     
@@ -351,6 +351,19 @@ X, X_validation, Y, Y_validation = train_test_split(X, Y, test_size = 0.2) # 80%
 
 
 X_train, x_test, Y_train, Y_test = train_test_split(X_train, Y_train, test_size = 0.3) #70% para train y 30% para testing
+
+
+def metricas(Y_pred,Y_test):
+
+    acc_test = metrics.accuracy_score(Y_test, Y_pred)
+    prec_test = metrics.precision_score(Y_test, Y_pred,average="weighted")
+    recall_test=metrics.recall_score(Y_test, Y_pred,average="weighted")
+
+    return acc_test, prec_test, recall_test
+
+
+
+
 
 #%%        
 
@@ -363,32 +376,44 @@ cnombres = ['0', '1', '2', '3', '4', '5', '6', '7','8','9']
 arbol = tree.DecisionTreeClassifier(criterion = "entropy", max_depth= 1)
 arbol = arbol.fit(X_train, Y_train)
 
+Y_pred = arbol.predict(X_test)
+
+acc, prec, recall=metricas(Y_pred,Y_test)
+
+
 
 
 plt.figure(figsize= [15,10])
 tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cnombres)
-
 
 #%%
 #depth =5
 arbol = tree.DecisionTreeClassifier(criterion = "entropy", max_depth= 5)
 arbol = arbol.fit(X_train, Y_train)
 
+Y_pred = arbol.predict(X_test)
+Y_pred_train = arbol.predict(X_train)
 
+acc, prec, recall=metricas(Y_pred,Y_test)
 
 plt.figure(figsize= [15,10])
 tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cnombres)
+
 
 #%%
 #depth =10
 arbol = tree.DecisionTreeClassifier(criterion = "entropy", max_depth= 10)
 arbol = arbol.fit(X_train, Y_train)
 
+Y_pred = arbol.predict(X_test)
+Y_pred_train = arbol.predict(X_train)
+
+acc, prec, recall=metricas(Y_pred,Y_test)
 
 
 plt.figure(figsize= [15,10])
 tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cnombres)
-#seba dice: recontra overfil!
+
 
 #%%
 #PELIGRO AL CORRER ESTO TARDA MUCHISIMO!!!!!!!!!!!
@@ -396,8 +421,12 @@ tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cn
 Nrep = 5
 valores_n = range(1, 11)
 
-resultados_test_gini = np.zeros((Nrep, len(valores_n)))
-resultados_train_gini = np.zeros((Nrep, len(valores_n)))
+resultados_test_gini_acc = np.zeros((Nrep, len(valores_n)))
+resultados_train_gini_acc = np.zeros((Nrep, len(valores_n)))
+resultados_test_gini_prec = np.zeros((Nrep, len(valores_n)))
+resultados_train_gini_prec = np.zeros((Nrep, len(valores_n)))
+resultados_test_gini_recall= np.zeros((Nrep, len(valores_n)))
+resultados_train_gini_recall= np.zeros((Nrep, len(valores_n)))
 
 criterion= ["entropy","gini"]
 
@@ -408,36 +437,63 @@ for i in range(Nrep):
         model.fit(X_train, Y_train) 
         Y_pred = model.predict(X_test)
         Y_pred_train = model.predict(X_train)
-        acc_test = metrics.accuracy_score(Y_test, Y_pred)
-        acc_train = metrics.accuracy_score(Y_train, Y_pred_train)
-        resultados_test_gini[i, k-1] = acc_test
-        resultados_train_gini[i, k-1] = acc_train
+        acc, prec, recall=metricas(Y_pred,Y_test)
         
-resultados_test_entropy = np.zeros((Nrep, len(valores_n)))
-resultados_train_entropy = np.zeros((Nrep, len(valores_n)))
+        resultados_test_gini_acc[i, k-1] = acc
+#        resultados_train_gini_acc[i, k-1] = acc_train
+        resultados_test_gini_prec[i, k-1] = prec
+#        resultados_train_gini_prec[i, k-1] = prec_train
+        resultados_test_gini_recall[i, k-1] = recall
+#        resultados_train_gini_recall[i, k-1] = recall_train 
         
+resultados_test_entropy_acc = np.zeros((Nrep, len(valores_n)))
+#resultados_train_entropy_acc = np.zeros((Nrep, len(valores_n)))
+resultados_test_entropy_prec = np.zeros((Nrep, len(valores_n)))
+#resultados_train_entropy_prec = np.zeros((Nrep, len(valores_n)))
+resultados_test_entropy_recall= np.zeros((Nrep, len(valores_n)))
+#resultados_train_entropy_recall= np.zeros((Nrep, len(valores_n)))
+      
 for i in range(Nrep):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3)
     for k in valores_n:
-        model = tree.DecisionTreeClassifier(criterion = 'gini', max_depth= k)
+        model = tree.DecisionTreeClassifier(criterion = 'entropy', max_depth= k)
         model.fit(X_train, Y_train) 
         Y_pred = model.predict(X_test)
         Y_pred_train = model.predict(X_train)
-        acc_test = metrics.accuracy_score(Y_test, Y_pred)
-        acc_train = metrics.accuracy_score(Y_train, Y_pred_train)
-        resultados_test_entropy[i, k-1] = acc_test
-        resultados_train_entropy[i, k-1] = acc_train
+        acc, prec, recall=metricas(Y_pred,Y_test)
+
+        resultados_test_entropy_acc[i, k-1] = acc
+#        resultados_train_entropy_acc[i, k-1] = acc_train
+        resultados_test_entropy_prec[i, k-1] = prec
+#        resultados_train_entropy_prec[i, k-1] = prec_train
+        resultados_test_entropy_recall[i, k-1] = recall
+#        resultados_train_entropy_recall[i, k-1] = recall_train
+
 #%%
 
-promedios_train_gini = np.mean(resultados_train_gini,axis=0)
-promedios_test_gini= np.mean(resultados_test_gini,axis=0)
 
-promedios_train_entropy = np.mean(resultados_train_entropy,axis=0)
-promedios_test_entropy= np.mean(resultados_test_entropy,axis=0)
-#En todos los casos, mientrsa mas preguntas hacmoes, mejor precision tiene el modelo.pero con 10 tarda mucho. 
-#Definimos por usar depth = 9
+
+
+promedios_test_gini_acc= np.mean(resultados_test_gini_acc,axis=0)
+
+
+promedios_test_entropy_acc= np.mean(resultados_test_entropy_acc,axis=0)
+
+
+promedios_test_gini_prec= np.mean(resultados_test_gini_prec,axis=0)
+
+
+promedios_test_entropy_prec= np.mean(resultados_test_entropy_prec,axis=0)
+
+
+prom_recalls_v_gini = np.mean(resultados_test_gini_recall,axis=0)
+
+
+prom_recalls_v_entropy = np.mean(resultados_test_entropy_recall,axis=0)
+
+#En todos los casos, mientrsa mas preguntas hacmoes, mejor precision y accuracy tiene el modelo.
+#pero con 10 tarda mucho. Definimos por usar depth = 9
 #%%
-
 
 #Ahora salgamos al mundo real, y con el modelo de depth = 9 intentemos predecir:
     
@@ -447,10 +503,55 @@ promedios_test_entropy= np.mean(resultados_test_entropy,axis=0)
 model = tree.DecisionTreeClassifier(criterion = 'gini', max_depth= 9)
 model.fit(X, Y) 
 Y_pred = model.predict(X_validation)
-Y_pred_train = model.predict(X)
-acc_test = metrics.accuracy_score(Y_validation, Y_pred)
-acc_train = metrics.accuracy_score(Y, Y_pred_train)
-metrics.confusion_matrix(Y, Y_pred_train)
+Y_pred_train = model.predict(X)             ###################################################
+metrics.confusion_matrix(Y, Y_pred_train) #No corre con y_validation no se que pasa VER!!!!!
+##############################################################################################
+
+
+#%%
+
+acc, prec, recall=metricas(Y_pred,Y_validation)
+
+
+#%%
+#grafico Gini K-FOLD
+
+plt.scatter(valores_n,promedios_test_gini_acc, c='blue',label='Exactitud', alpha=0.6, edgecolors='w', s=20)
+plt.scatter(valores_n,promedios_test_gini_prec, c='red',label='Recall', alpha=0.6, edgecolors='w', s=20)
+plt.scatter(valores_n,prom_recalls_v_gini, c='green',label='Precisión', alpha=0.6, edgecolors='w', s=20)
+
+
+plt.plot(valores_n, promedios_test_gini_acc, c='blue', alpha=0.6)  # Línea azul para Exactitud
+plt.plot(valores_n, prom_recalls_v_gini, c='red', alpha=0.6)      # Línea roja para Recall
+plt.plot(valores_n, promedios_test_gini_prec, c='green', alpha=0.6) # Línea verde para Precisión
+
+plt.title('Métricas en función de profundidad del arbol GINI', fontsize=16)
+plt.xlabel('Depth', fontsize=14)
+plt.ylabel('Valor métrica', fontsize=14)
+
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.legend(title='Métrica')
+plt.show()    
+
+#%%
+#grafico Entropy K-FOLD
+
+plt.scatter(valores_n,promedios_test_entropy_acc, c='blue',label='Exactitud', alpha=0.6, edgecolors='w', s=20)
+plt.scatter(valores_n,promedios_test_entropy_prec, c='red',label='Recall', alpha=0.6, edgecolors='w', s=20)
+plt.scatter(valores_n,prom_recalls_v_entropy, c='green',label='Precisión', alpha=0.6, edgecolors='w', s=20)
+
+
+plt.plot(valores_n, promedios_test_entropy_acc, c='blue', alpha=0.6)  # Línea azul para Exactitud
+plt.plot(valores_n, prom_recalls_v_entropy, c='red', alpha=0.6)      # Línea roja para Recall
+plt.plot(valores_n, promedios_test_entropy_prec, c='green', alpha=0.6) # Línea verde para Precisión
+
+plt.title('Métricas en función de profundidad del arbol ENTROPY', fontsize=16)
+plt.xlabel('Depth', fontsize=14)
+plt.ylabel('Valor métrica', fontsize=14)
+
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.legend(title='Métrica')
+plt.show()    
 
 
 

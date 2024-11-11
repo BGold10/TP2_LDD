@@ -151,6 +151,15 @@ cnombres = ['0', '1', '2', '3', '4', '5', '6', '7','8','9']
 arbol = tree.DecisionTreeClassifier(criterion = "entropy", max_depth= 1)
 arbol = arbol.fit(X_train, Y_train)
 
+Y_pred = arbol.predict(X_test)
+Y_pred_train = arbol.predict(X_train)
+
+acc_test = metrics.accuracy_score(Y_test, Y_pred)
+acc_train = metrics.accuracy_score(Y_train, Y_pred_train)
+prec_test = metrics.precision_score(Y_test, Y_pred,average="weighted")
+prec_train = metrics.precision_score(Y_train, Y_pred_train,average="weighted")
+recall_test=metrics.recall_score(Y_test, Y_pred,average="weighted")
+recall_train=metrics.recall_score(Y_train, Y_pred_train,average="weighted")
 
 
 plt.figure(figsize= [15,10])
@@ -161,7 +170,15 @@ tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cn
 arbol = tree.DecisionTreeClassifier(criterion = "entropy", max_depth= 5)
 arbol = arbol.fit(X_train, Y_train)
 
+Y_pred = arbol.predict(X_test)
+Y_pred_train = arbol.predict(X_train)
 
+acc_test = metrics.accuracy_score(Y_test, Y_pred)
+acc_train = metrics.accuracy_score(Y_train, Y_pred_train)
+prec_test = metrics.precision_score(Y_test, Y_pred,average="weighted")
+prec_train = metrics.precision_score(Y_train, Y_pred_train,average="weighted")
+recall_test=metrics.recall_score(Y_test, Y_pred,average="weighted")
+recall_train=metrics.recall_score(Y_train, Y_pred_train,average="weighted")
 
 plt.figure(figsize= [15,10])
 tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cnombres)
@@ -172,6 +189,15 @@ tree.plot_tree(arbol,filled = True, rounded = True, fontsize = 10,class_names=cn
 arbol = tree.DecisionTreeClassifier(criterion = "entropy", max_depth= 10)
 arbol = arbol.fit(X_train, Y_train)
 
+Y_pred = arbol.predict(X_test)
+Y_pred_train = arbol.predict(X_train)
+
+acc_test = metrics.accuracy_score(Y_test, Y_pred)
+acc_train = metrics.accuracy_score(Y_train, Y_pred_train)
+prec_test = metrics.precision_score(Y_test, Y_pred,average="weighted")
+prec_train = metrics.precision_score(Y_train, Y_pred_train,average="weighted")
+recall_test=metrics.recall_score(Y_test, Y_pred,average="weighted")
+recall_train=metrics.recall_score(Y_train, Y_pred_train,average="weighted")
 
 
 plt.figure(figsize= [15,10])
@@ -265,7 +291,7 @@ prom_recalls_v_entropy = np.mean(resultados_test_entropy_recall,axis=0)
 #En todos los casos, mientrsa mas preguntas hacmoes, mejor precision y accuracy tiene el modelo.
 #pero con 10 tarda mucho. Definimos por usar depth = 9
 #%%
-
+import pyperclip
 
 #Ahora salgamos al mundo real, y con el modelo de depth = 9 intentemos predecir:
     
@@ -280,17 +306,22 @@ acc_test = metrics.accuracy_score(Y_validation, Y_pred)
 acc_train = metrics.accuracy_score(Y, Y_pred_train)
 metrics.confusion_matrix(Y, Y_pred_train)
 
+text_to_copy = "\n".join(["\t".join(map(str, row)) for row in metrics.confusion_matrix(Y, Y_pred_train)])
+
+# Copiar el texto al portapapeles
+pyperclip.copy(text_to_copy)
 #%%
+
 prec_train = metrics.precision_score(Y, Y_pred_train,average="weighted")
-prec_val = metrics.precision_score(Y_validation, Y_pred,average="macro")
+prec_val = metrics.precision_score(Y_validation, Y_pred,average="weighted")
 acc_val = metrics.accuracy_score(Y_validation, Y_pred)
-recall_val=metrics.recall_score(Y_validation, Y_pred,average="macro")
+recall_val=metrics.recall_score(Y_validation, Y_pred,average="weighted")
 
 
 print(recall_val==acc_val)
 print(recall_val - acc_val)
 
-
+print(prec_val,acc_val,recall_val)
 
 
 
