@@ -22,8 +22,10 @@ from sklearn.metrics import  precision_score, recall_score
 #prefijo = 'C:/Users/Bruno Goldfarb/Downloads/'
 
 #seba
-prefijo = 'C:\\Users\\Sebastián\\Documents\\LaboDeDatos\\TP2\\'
+#prefijo = 'C:\\Users\\Sebastián\\Documents\\LaboDeDatos\\TP2\\'
 
+#giannis
+prefijo='C:/Users/usuario/Desktop/TP2_LDD/TP2/'
 
 data = pd.read_csv(prefijo + 'TMNIST_Data.csv')
 
@@ -357,18 +359,18 @@ plt.show()
 
 #separo el modelo en train, testing y validation:
     
-X, X_validation, Y, Y_validation = train_test_split(X, Y, test_size = 0.2) # 80% para train y 20% para validation
+X_D, X_validation, Y_D, Y_validation = train_test_split(X, Y, test_size = 0.2) # 80% para train y 20% para validation
 
 
 
-X_train, x_test, Y_train, Y_test = train_test_split(X_train, Y_train, test_size = 0.3) #70% para train y 30% para testing
+X_train, X_test, Y_train, Y_test = train_test_split(X_D, Y_D, test_size = 0.3) #70% para train y 30% para testing
 
 
-def metricas(Y_pred,Y_test):
+def metricas(pred,obtenido):
 
-    acc_test = metrics.accuracy_score(Y_test, Y_pred)
-    prec_test = metrics.precision_score(Y_test, Y_pred,average="weighted")
-    recall_test=metrics.recall_score(Y_test, Y_pred,average="weighted")
+    acc_test = metrics.accuracy_score(obtenido, pred)
+    prec_test = metrics.precision_score(obtenido,pred,average="weighted")
+    recall_test=metrics.recall_score(obtenido, pred,average="weighted")
 
     return acc_test, prec_test, recall_test
 
@@ -505,7 +507,7 @@ prom_recalls_v_entropy = np.mean(resultados_test_entropy_recall,axis=0)
 #En todos los casos, mientrsa mas preguntas hacmoes, mejor precision y accuracy tiene el modelo.
 #pero con 10 tarda mucho. Definimos por usar depth = 9
 #%%
-
+import pyperclip
 #Ahora salgamos al mundo real, y con el modelo de depth = 9 intentemos predecir:
     
     
@@ -515,14 +517,16 @@ model = tree.DecisionTreeClassifier(criterion = 'gini', max_depth= 9)
 model.fit(X, Y) 
 Y_pred = model.predict(X_validation)
 Y_pred_train = model.predict(X)             ###################################################
-metrics.confusion_matrix(Y, Y_pred_train) #No corre con y_validation no se que pasa VER!!!!!
+matriz=metrics.confusion_matrix(Y_validation, Y_pred) #No corre con y_validation no se que pasa VER!!!!!
 ##############################################################################################
+text_to_copy = "\n".join(["\t".join(map(str, row)) for row in matriz])
 
+# Copiar el texto al portapapeles
+pyperclip.copy(text_to_copy)
 
 #%%
 
 acc, prec, recall=metricas(Y_pred,Y_validation)
-
 
 #%%
 #grafico Gini K-FOLD

@@ -138,7 +138,7 @@ X, X_validation, Y, Y_validation = train_test_split(X, Y, test_size = 0.2) # 80%
 
 
 
-X_train, x_test, Y_train, Y_test = train_test_split(X_train, Y_train, test_size = 0.3) #70% para train y 30% para testing
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3) #70% para train y 30% para testing
 
 #%%        
 
@@ -269,6 +269,8 @@ for i in range(Nrep):
         resultados_train_entropy_recall[i, k-1] = recall_train
 
 #%%
+
+
 
 promedios_train_gini_acc = np.mean(resultados_train_gini_acc,axis=0)
 promedios_test_gini_acc= np.mean(resultados_test_gini_acc,axis=0)
