@@ -3,7 +3,7 @@
 #               -Souto, Sebastian Manuel
 #               -Sanza, Gian Lucca
 #               -Goldfarb, Bruno
-
+import os
 from inline_sql import sql, sql_val
 from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
@@ -18,14 +18,11 @@ import random as rd
 import copy 
 from sklearn.metrics import  precision_score, recall_score
 
-#bruno
-#prefijo = 'C:/Users/Bruno Goldfarb/Downloads/'
+ruta_base = Path(__file__).parent
 
-#seba
-#prefijo = 'C:\\Users\\Sebastián\\Documents\\LaboDeDatos\\TP2\\'
+os.chdir(ruta_base)
 
-#giannis
-prefijo='C:/Users/usuario/Desktop/TP2_LDD/TP2/'
+prefijo="TablasLimpias/"
 
 data = pd.read_csv(prefijo + 'TMNIST_Data.csv')
 
