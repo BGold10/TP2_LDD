@@ -73,7 +73,7 @@ dibujarPromedio(muestreo)
 consulta_sql = """
                 SELECT DISTINCT * 
                 FROM data
-                WHERE labels == '1' OR  labels == '0';               
+                WHERE labels == '1' or labels == '7';               
                """             
 img1 = sql^consulta_sql
 n = 500
@@ -85,15 +85,62 @@ for i in range(n):
 muestreo = data1.iloc[indices]
 promedios = muestreo.mean(axis=0).tolist()
 img2 = np.array(promedios).reshape((28,28))
-
-# n = data1.shape[0]
-# data1.loc[len(muestreo)] = promedios
-# img = np.array(promedios).reshape((28,28))
 plt.imshow(img2, cmap='gray')
 plt.show()
-
-
-
+#%%
+consulta_sql = """
+                SELECT DISTINCT * 
+                FROM data
+                WHERE labels == '6' or labels == '8';               
+               """             
+img1 = sql^consulta_sql
+n = 500
+indices = []
+data1 = img1.iloc[:,2:]
+for i in range(n):
+    indice = rd.randint(0, data1.shape[0])
+    indices.append(indice)
+muestreo = data1.iloc[indices]
+promedios = muestreo.mean(axis=0).tolist()
+img2 = np.array(promedios).reshape((28,28))
+plt.imshow(img2, cmap='gray')
+plt.show()
+#%%
+consulta_sql = """
+                SELECT DISTINCT * 
+                FROM data
+                WHERE labels == '0';               
+               """             
+img1 = sql^consulta_sql
+n = 100
+indices = []
+data1 = img1.iloc[:,2:]
+for i in range(n):
+    indice = rd.randint(0, data1.shape[0])
+    indices.append(indice)
+muestreo = data1.iloc[indices]
+promedios = muestreo.mean(axis=0).tolist()
+img2 = np.array(promedios).reshape((28,28))
+plt.imshow(img2, cmap='gray')
+plt.show()
+#%%
+consulta_sql = """
+                SELECT DISTINCT * 
+                FROM data
+                WHERE labels == '0';               
+               """             
+img1 = sql^consulta_sql
+n = 3
+indices = []
+data1 = img1.iloc[:,2:]
+for i in range(n):
+    indice = rd.randint(0, data1.shape[0])
+    indices.append(indice)
+muestreo = data1.iloc[indices]
+promedios = muestreo.mean(axis=0).tolist()
+img2 = np.array(promedios).reshape((28,28))
+plt.imshow(img2, cmap='gray')
+plt.show()
 #%%
 
 #1c
